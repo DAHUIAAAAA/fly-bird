@@ -6,7 +6,7 @@ export default class ResourceLoader {
     constructor() {
         this.map = new Map(Resources);
         for (let [key, value] of this.map) {
-            const image = window.wx ? wx.createImage() : new Image();
+            const image = typeof wx !== 'undefined' ? wx.createImage() : new Image();
             image.src = value;
             this.map.set(key, image);
         }

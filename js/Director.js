@@ -45,7 +45,7 @@ export default class Director {
         // 检测是否碰到地面
         if (Math.floor(birds.y + birds.clipHeight) >= land.y) {
             this.isGameOver = true;
-            this.dataStore.get('startButton').draw();
+            this.drawToCanvas();
             return;
         }
 
@@ -71,19 +71,19 @@ export default class Director {
 
             if (i % 2 === 0) {
                 if (birdBorder['right'] >= pencilBorder['left'] + 20 &&
-                    birdBorder['right'] <= pencilBorder['right'] &&
+                    birdBorder['left'] <= pencilBorder['right'] - 20 &&
                     birdBorder['top'] <= pencilBorder['bottom']) {
                     this.isGameOver = true;
+                    this.drawToCanvas();
                 }
             } else {
                 if (birdBorder['right'] >= pencilBorder['left'] + 20 &&
-                    birdBorder['right'] <= pencilBorder['right'] &&
+                    birdBorder['left'] <= pencilBorder['right'] - 20 &&
                     birdBorder['bottom'] >= pencilBorder['top']) {
                     this.isGameOver = true;
+                    this.drawToCanvas();
                 }
             }
-
-            if (this.isGameOver) this.dataStore.get('startButton').draw();
 
         }
 
@@ -105,44 +105,49 @@ export default class Director {
 
     }
 
+    drawToCanvas() {
+        // 绘制背景图、铅笔、地面
+        this.dataStore.get('background').draw();
+
+        const pencils = this.dataStore.get('pencils');
+        // 等铅笔消失在屏幕时删除铅笔
+        if (pencils[0].x < - pencils[0].width &&
+            pencils.length === 4) {
+            pencils.shift();
+            pencils.shift();
+            this.dataStore.get('score').isScore = true;
+        }
+
+        if (pencils[0].x <= (this.canvasWidth - pencils[0].width) / 2
+            && pencils.length === 2) {
+            this.createPencil();
+        }
+        pencils.forEach(pencil => {
+            pencil.draw();
+        });
+
+        this.dataStore.get('land').draw();
+        this.dataStore.get('birds').draw();
+        this.addScore();
+
+        if (this.isGameOver) this.dataStore.get('startButton').draw();
+    }
+
     run() {
 
         this.checkBoom();
 
         if (!this.isGameOver) {
-            // 绘制背景图、铅笔、地面
-            this.dataStore.get('background').draw();
-
-            const pencils = this.dataStore.get('pencils');
-            // 等铅笔消失在屏幕时删除铅笔
-            if (pencils[0].x < - pencils[0].width &&
-                pencils.length === 4) {
-                pencils.shift();
-                pencils.shift();
-                this.dataStore.get('score').isScore = true;
-            }
-
-            if (pencils[0].x <= (this.canvasWidth - pencils[0].width) / 2
-                && pencils.length === 2) {
-                this.createPencil();
-            }
-            pencils.forEach(pencil => {
-                pencil.draw();
-            });
-
-            this.dataStore.get('land').draw();
-            this.dataStore.get('birds').draw();
-            this.addScore();
-
+            this.drawToCanvas();
             cancelAnimationFrame(this.dataStore.get('timer'));
             let timer = requestAnimationFrame(() => this.run());
             this.dataStore.put('timer', timer);
 
         } else {
+
             cancelAnimationFrame(this.dataStore.get('timer'));
             this.dataStore.destory();
         }
-
 
     }
 }

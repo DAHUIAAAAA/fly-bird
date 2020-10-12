@@ -7,10 +7,18 @@ import Birds from './js/player/Birds.js';
 import SatrtButton from './js/player/StartButton.js';
 import Score from './js/player/Score.js';
 
+// 开启微信debug工具
+// if (typeof wx !== 'undefined') {
+//     wx.setEnableDebug({
+//         enableDebug: true
+//     });
+// }
+
+
 export default class App {
 
     constructor() {
-        this.canvas = window.wx ? wx.createCanvas() : document.getElementById('game');
+        this.canvas = typeof wx === "undefined" ? document.getElementById('game') : wx.createCanvas();
         this.ctx = this.canvas.getContext('2d');
         this.director = Director.getInstance(this.canvas.width, this.canvas.height);
 
@@ -45,7 +53,7 @@ export default class App {
         }
 
         // 兼容h5
-        !window.wx && ['keydown', 'click'].forEach(eventName => {
+        typeof wx === "undefined" && ['keydown', 'click'].forEach(eventName => {
             window.addEventListener(eventName, e => {
                 if (eventName === 'keydown' && e.keyCode === 32) {
                     event(e);
@@ -57,7 +65,7 @@ export default class App {
         });
 
         // 兼容微信
-        if (window.wx) {
+        if (typeof wx !== "undefined") {
             wx.onTouchStart(e => {
                 event(e);
             })

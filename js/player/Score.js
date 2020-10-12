@@ -10,15 +10,15 @@ export default class Score {
     }
 
     draw() {
-        
+
         const director = Director.getInstance();
 
         this.ctx.font = '25px Arial';
         this.ctx.fillStyle = '#ffcbeb';
         this.ctx.fillText(
             this.score,
-            director.canvasWidth / 2,
-            director.canvasHeight / 18,
+            director.canvasWidth / 8,
+            director.canvasHeight / 10,
             1000
         )
     }

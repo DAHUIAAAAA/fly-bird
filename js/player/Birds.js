@@ -38,7 +38,7 @@ export default class Birds extends Sprite {
         // 重力加速度
         const g = 0.98 / 2.4;
         // 向上的偏移量
-        const offsetUp = window.wx ? 15 : 20;
+        const offsetUp = typeof wx !== 'undefined' ? 15 : 20;
         this.y = this.lastY + g * this.time * (this.time - offsetUp);
         this.time++;
 
